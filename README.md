@@ -1,123 +1,92 @@
-﻿# Riot-League-Rank-spoofer-challenger-
+Riot-League-Rank-Spoofer-Challenger
+  CSLOL Manager + Pengu Loader – Fake Challenger Setup
 
-CSLOL Manager + Pengu Loader – Fake Challenger Setup
+    Ce setup permet de personnaliser ton profil League of Legends
+    (recall, emote, border, rank affiché en Challenger, etc.) uniquement côté client.
 
-Ce setup permet de personnaliser ton profil League of Legends (recall, emote, border, rank affiché en Challenger, etc.) uniquement côté client.
-👉 Aucun impact sur le matchmaking réel.
+👉 Aucun impact sur le matchmaking réel (LP / MMR inchangés).
 
-Prérequis
+📌 Prérequis
+ League of Legends installé
+ Windows uniquement
 
-League of Legends installé
+ ⚠️Lancer les outils avant que le client LoL soit ouvert
 
-Windows
-
-Lancer les outils avant ou pendant que le client LoL est ouvert
-
-Outils utilisés
-
-CSLOL Manager
-https://lcsmanager.com/
-
-Pengu Loader
-https://pengu.lol/guide/welcome
-
-League Profile Tool
-https://github.com/MManoah/league-profile-tool
-
-Installation
-1️⃣ CSLOL Manager (.fantome)
-
-Installer CSLOL Manager
-
-Ouvrir le dossier :
-
-CSLOL/plugins
+🛠️ Outils utilisés
+1️⃣ CSLOL Manager
+2️⃣ Pengu Loader
+3️⃣ League Profile Tool
 
 
-Mettre tous les fichiers .fantome dedans
-Exemple :
-
-Challenger_Recall.fantome
-
-challenger emote V1.0.fantome
-
-chall border.fantome
-
-Lancer CSLOL Manager
-
-Activer les plugins
-
-📌 Ces fichiers modifient :
-
-Recall
-
-Emote
-
-Border
+⚙️ Installation
+    1️⃣ CSLOL Manager (.fantome)
+    
+    Installer CSLOL Manager
+    
+    Ouvrir CSLOL et cliquer sur Import new mod (bouton en bas à droite)
+    
+    Importer les fichiers .fantome suivants :
+    
+    Challenger_Recall.fantome
+    challenger emote V1.0.fantome
+    chall border.fantome
+    
+    
+    Lancer CSLOL Manager avec le bouton en haut à droite
+    
+    📌 Ces fichiers modifient :
+     Recall
+     Emote
+     Border
 
 2️⃣ Pengu Loader (.js)
 
-Installer Pengu Loader
-
-Dézipper :
-
-pengu.zip
-
-
-Mettre le dossier dézippé dans :
-
-PenguLoader/plugins
-
-
-Vérifier que les fichiers sont bien en .js
-
-Lancer Pengu Loader
-
-📌 Ces plugins modifient l’apparence du profil côté client
+    Installer Pengu Loader
+    
+    Dézipper :
+    pengu.zip
+    
+    Aller dans le dossier plugins du téléchargement
+    Copier UNE des deux versions (1 ou 2)
+    
+    ⚠️ IMPORTANT
+    👉 Ne coller QUE LE CONTENU dans :
+    Pengu Loader\plugins
+    ❌ Si tu colles le dossier version... entier → ça ne marchera pas
+    
+    Lancer Pengu Loader
+    📌 Ces plugins modifient l’apparence du profil côté client
 
 3️⃣ Fake Rank Challenger (League Profile Tool)
 
-Installer league-profile-tool
-
-Lancer l’application
-
-Faire défiler les catégories
-
-Aller dans :
-
-Chat Rank
-
-
-Sélectionner :
-
-Challenger
+    Installer league-profile-tool
+    Lancer l’application
+    
+    Faire défiler les catégories
+    Aller dans : Chat Rank
+    Sélectionner : Challenger
 
 
 📌 Résultat :
+    🏆 Rank Challenger affiché dans le chat
+    👀 Visible par les autres joueurs
+    🎭 100% visuel
 
-Rank Challenger affiché dans le chat
+✅ Résultat final
 
-Visible par les autres joueurs
+    🏆 Rank Challenger affiché (chat + profil)
+    🏅 Border Challenger
+    😎 Emote Challenger
+    🔁 Recall Challenger
+    👉 “Challenger partout (ou presque)”
+    
+    ⚠️ Notes importantes :
+    
+    🎭 Modifications principalement visuelles
+    ❌ Aucun gain de LP / MMR
 
-100% visuel
 
-Résultat final
+💬 Besoin d’aide ?
+👉 DM Discord : @Vinz9.2
 
-Rank Challenger affiché (chat + profil)
-
-Border Challenger
-
-Emote Challenger
-
-Recall Challenger
-👉 “Challenger partout (ou presque)”
-
-⚠️ Notes importantes
-
-Modifications visuelles uniquement
-
-Aucun gain de LP / MMR
-
-À utiliser à tes risques (jamais officiellement supporté par Riot)
-
-Ne pas streamer avec sans savoir ce que tu fais
+✨ GL & amuse-toi bien
