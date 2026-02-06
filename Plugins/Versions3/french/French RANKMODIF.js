@@ -1,13 +1,12 @@
+//"PUUID (FOUND BY CTRL+MAJ+I ON YOUR/THE PERSON'S PROFILE -> CTRL+F -> type 'PUUID'. IF NOT YOUR PROFILE SEARCH FOR THE ONE WHERE 'is-seached' IS FALSE": 
+//'BANNER LINK (CAN BE FOUND ON COMUNITYDRAGON) THE RANK OF THE BANNER CHANGES YOUR LAST SEASON RANK (MIGHT BE PROBLEMATIC WITH NON RANKED BANNERS : USE RANKEDLOBBY.JS)'
+
+
+
 (function () {
   const PLAYERS_CONFIG = {
+     //exemple of working profile
    "f8cfb78f-66e6-5401-a710-02f1491b4c42": {
-      tier: 'Challenger',
-      div: " ",
-      text: 'Challenger',
-      wins: 327,
-      lp: 1468,
-      banner:'/lol-game-data/assets/ASSETS/Regalia/BannerSkins/CHALLENGER.png'
-   }, "f8cfb78f-66e6-5401-a710-02f1491b4c42": {
       tier: 'Challenger',
       div: " ",
       text: 'Challenger',
@@ -23,6 +22,47 @@
       banner:'/lol-game-data/assets/ASSETS/Regalia/BannerSkins/CHALLENGER.png'
    }
 
+  }
+
+  // Cache pour les sélecteurs et éléments
+  const SELECTORS = {
+    profile: [
+      '.style-profile-emblem-wrapper',
+      '.profile-emblem-wrapper',
+      '.ranked-emblem-wrapper',
+      '[class*="profile-emblem"]',
+      '[class*="ranked-emblem"]'
+    ],
+    title: [
+      '.style-profile-emblem-header-title',
+      '.profile-emblem-header-title',
+      '.ranked-emblem-header-title',
+      '[class*="header-title"]',
+      'div[class*="title"]'
+    ],
+    subtitle: [
+      '.style-profile-emblem-header-subtitle',
+      '.profile-emblem-header-subtitle',
+      '.ranked-emblem-header-subtitle',
+      '[class*="header-subtitle"]',
+      'div[class*="subtitle"]'
+    ],
+    emblem: [
+      'lol-regalia-emblem-element',
+      '.regalia-emblem-element',
+      '[class*="emblem-element"]'
+    ]
+  };
+
+  // Throttling pour éviter les exécutions trop fréquentes
+  let isThrottled = false;
+  function throttle(func, delay) {
+    return function() {
+      if (isThrottled) return;
+      isThrottled = true;
+      func.apply(this, arguments);
+      setTimeout(() => { isThrottled = false; }, delay);
+    };
   }
 
   // Petite fonction pour extraire "MASTER" de ".../MASTER.png"
@@ -79,45 +119,21 @@
       const wrapperConfig = getContextConf(wrapper) || getPageAuth();
       if (!wrapperConfig) return;
 
-      // Essayer plusieurs sélecteurs pour le titre
-      const titleSelectors = [
-        '.style-profile-emblem-header-title',
-        '.profile-emblem-header-title',
-        '.ranked-emblem-header-title',
-        '[class*="header-title"]',
-        'div[class*="title"]'
-      ];
-      
+      // Utiliser les sélecteurs optimisés
       let title = null;
-      for (const selector of titleSelectors) {
+      for (const selector of SELECTORS.title) {
         title = wrapper.querySelector(selector);
         if (title) break;
       }
 
-      // Essayer plusieurs sélecteurs pour le sous-titre
-      const subtitleSelectors = [
-        '.style-profile-emblem-header-subtitle',
-        '.profile-emblem-header-subtitle',
-        '.ranked-emblem-header-subtitle',
-        '[class*="header-subtitle"]',
-        'div[class*="subtitle"]'
-      ];
-      
       let subtitle = null;
-      for (const selector of subtitleSelectors) {
+      for (const selector of SELECTORS.subtitle) {
         subtitle = wrapper.querySelector(selector);
         if (subtitle) break;
       }
 
-      // Essayer plusieurs sélecteurs pour l'emblème
-      const emblemSelectors = [
-        'lol-regalia-emblem-element',
-        '.regalia-emblem-element',
-        '[class*="emblem-element"]'
-      ];
-      
       let emblem = null;
-      for (const selector of emblemSelectors) {
+      for (const selector of SELECTORS.emblem) {
         emblem = wrapper.parentElement?.querySelector(selector) || wrapper.querySelector(selector);
         if (emblem) break;
       }
@@ -270,7 +286,9 @@
           '.ranked-tooltip-last-season-queue-tier',
           '.tooltip-tier',
           '[class*="tooltip-tier"]',
-          '[class*="queue-tier"]'
+          '[class*="queue-tier"]',
+          'div[class*="tier"]',
+          'span[class*="tier"]'
         ];
 
         let tierTextEl = null;
@@ -279,8 +297,27 @@
           if (tierTextEl) break;
         }
 
+        // Si aucun élément trouvé, chercher plus agressivement
+        if (!tierTextEl) {
+          const allDivs = queue.querySelectorAll('div, span');
+          for (const div of allDivs) {
+            const text = div.textContent?.trim();
+            if (text && text.length > 0 && !text.includes('Wins') && !text.includes('LP') && 
+                !text.includes('Solo/Duo') && !text.includes('Last') && !text.includes('Season')) {
+              // Vérifier si le texte ressemble à un rang (ex: "GOLD", "PLATINUM", etc.)
+              if (text.length <= 15 && /^[A-Z]+$/.test(text.toUpperCase())) {
+                tierTextEl = div;
+                break;
+              }
+            }
+          }
+        }
+
         if (tierTextEl) {
-          tierTextEl.textContent = data.tierText;
+          const tierText = data.tierText || data.tier || queueConfig.tier;
+          if (tierText) {
+            tierTextEl.textContent = tierText;
+          }
         }
 
         // 3. LP/Victoires (uniquement pour Solo/Duo actuel)
@@ -297,7 +334,7 @@
             lpBlock = queue.querySelector(selector);
             if (lpBlock) break;
           }
-
+          const tierHtml = `<span>${queueConfig.tier}</span> ${queueConfig.div} <span>${queueConfig.text}</span>`;
           const html = `<span>${queueConfig.wins}</span> Wins <span>${queueConfig.lp}</span> LP`;
 
           if (!lpBlock) {
@@ -413,6 +450,7 @@
     }, 1000);
   });
 
-  // Garder l'intervalle original pour compatibilité
-  setInterval(() => patch(document), 30);
+  // Garder l'intervalle optimisé (moins gourmand)
+  const throttledPatch = throttle(() => patch(document), 200);
+  setInterval(throttledPatch, 200);
 })();
