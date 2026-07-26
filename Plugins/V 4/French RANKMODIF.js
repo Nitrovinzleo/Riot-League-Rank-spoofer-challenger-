@@ -14,11 +14,11 @@
       lp: 1468,
       banner:'/lol-game-data/assets/ASSETS/Regalia/BannerSkins/CHALLENGER.png'
    },"6c1fec8c-6741-5448-a1fa-5b9fc0afa6b4": {
-      tier: 'Challenger',
+      tier: 'GRANDMASTER',
       div: " ",
-      text: 'Challenger',
-      wins: 327,
-      lp: 1468,
+      text: 'GRANDMASTER',
+      wins: 32,
+      lp: 621,
       banner:'/lol-game-data/assets/ASSETS/Regalia/BannerSkins/CHALLENGER.png'
    }
 
