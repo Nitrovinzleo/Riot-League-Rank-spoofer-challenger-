@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chat Translator & Anti-Toxicity
-// @description  Translate chat messages to UwU or auto-censor insults into polite phrases with /translator commands.
-// @version      1.0
+// @description  Translate chat messages to UwU or auto-censor insults into polite phrases with a footer toggle button.
+// @version      1.1
 // @author       Antigravity
 // ==/UserScript==
 
@@ -129,6 +129,134 @@
             })
         }).catch(err => console.error('[ChatTranslator] Toast error:', err));
     }
+
+    function handleCommand(mode) {
+        const validModes = ['clean', 'gentil', 'uwu', 'off'];
+        if (validModes.includes(mode)) {
+            let targetMode = mode;
+            if (mode === 'gentil') targetMode = 'clean';
+            
+            currentMode = targetMode;
+            localStorage.setItem('chat-translator-mode', targetMode);
+            
+            let message = '';
+            if (targetMode === 'clean') {
+                message = 'Mode Anti-Toxicité activé ! 😇';
+            } else if (targetMode === 'uwu') {
+                message = 'Mode UwU mignon activé ! >w<';
+            } else {
+                message = 'Filtre de chat désactivé.';
+            }
+            sendToast('Traducteur de Chat', message);
+            updateButtonUI();
+            return true;
+        } else {
+            sendToast('Traducteur de Chat', 'Mode inconnu. Modes dispos : clean, uwu, off');
+            return false;
+        }
+    }
+
+    // --- BUTTON UI INTEGRATION ---
+    
+    // Inject Custom Styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #chatTranslatorButton {
+            height: 30px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-family: var(--font-body), sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #cdbe91;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #785a28;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+        }
+        #chatTranslatorButton:hover {
+            color: #f0e6d2;
+            background: rgba(120, 90, 40, 0.2);
+            border-color: #c8aa6e;
+            box-shadow: 0 0 8px rgba(200, 170, 110, 0.4);
+        }
+        #chatTranslatorButton.mode-clean {
+            color: #00ffcc;
+            border-color: #00b386;
+        }
+        #chatTranslatorButton.mode-clean:hover {
+            background: rgba(0, 255, 204, 0.1);
+            border-color: #00ffcc;
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+        }
+        #chatTranslatorButton.mode-uwu {
+            color: #ff88ff;
+            border-color: #cc66cc;
+        }
+        #chatTranslatorButton.mode-uwu:hover {
+            background: rgba(255, 136, 255, 0.1);
+            border-color: #ff88ff;
+            box-shadow: 0 0 8px rgba(255, 136, 255, 0.4);
+        }
+    `;
+    document.head.appendChild(style);
+
+    window.cycleChatTranslatorMode = function () {
+        let nextMode = 'off';
+        if (currentMode === 'off') {
+            nextMode = 'clean';
+        } else if (currentMode === 'clean') {
+            nextMode = 'uwu';
+        } else {
+            nextMode = 'off';
+        }
+        handleCommand(nextMode);
+    };
+
+    function updateButtonUI() {
+        const btn = document.getElementById('chatTranslatorButton');
+        if (!btn) return;
+        
+        btn.className = ''; // reset classes
+        
+        if (currentMode === 'clean') {
+            btn.textContent = 'Chat: Clean 😇';
+            btn.classList.add('mode-clean');
+        } else if (currentMode === 'uwu') {
+            btn.textContent = 'Chat: UwU >w<';
+            btn.classList.add('mode-uwu');
+        } else {
+            btn.textContent = 'Chat: Off 💬';
+        }
+    }
+
+    function injectButton() {
+        const container = document.querySelector(".v2-footer-notifications.ember-view");
+        if (container && !document.getElementById("chatTranslatorButton")) {
+            let btnContainer = document.querySelector(".cs-buttons-container");
+            if (!btnContainer) {
+                btnContainer = document.createElement("div");
+                btnContainer.className = "cs-buttons-container";
+                container.appendChild(btnContainer);
+            }
+            
+            const btn = document.createElement("button");
+            btn.id = "chatTranslatorButton";
+            btn.setAttribute("onclick", "window.cycleChatTranslatorMode()");
+            btnContainer.appendChild(btn);
+            updateButtonUI();
+        }
+    }
+
+    // Keep checking to handle view changes
+    setInterval(injectButton, 1000);
+
+    // --- NETWORK HOOKS ---
 
     // Intercept Fetch requests
     const originalFetch = window.fetch;
